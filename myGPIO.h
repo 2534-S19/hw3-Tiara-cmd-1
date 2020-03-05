@@ -48,7 +48,12 @@ void turnOn_BoosterpackLEDBlue();
 // This function turns off Boosterpack Blue LED.
 void turnOff_BoosterpackLEDBlue();
 
+// Added additional fxn
+void turnOffLeds();
+
 // TODO: Define any constants that are local to myGPIO.c using #define
 
+//#define PRESSED 0
+//#define RELEASED 1
 
 #endif /* MYGPIO_H_ */

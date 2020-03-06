@@ -24,6 +24,6 @@ bool fsmBoosterpackButtonS1(unsigned int buttonhistory);
 #define PRESSED 0
 #define RELEASED 1
 #define MOD 3
-typedef enum {Press,Release} debounce;
+typedef enum {Waiting,Detected, WaitingForRelease, Update} debounce;
 
 #endif /* HOMEWORK3_H_ */

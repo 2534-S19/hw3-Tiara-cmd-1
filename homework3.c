@@ -10,6 +10,7 @@ int main(void)
     unsigned int count1 = 0;
 
     // TODO: Declare the variables that main uses to interact with your state machine.
+    unsigned int buttonhistory = 1;
 
 
     // Stops the Watchdog timer.
@@ -39,15 +40,15 @@ int main(void)
             count0++;
 
 
-        // TODO: If Timer1 has expired, update the button history from the pushbutton value. --COMPLETED
+        // TODO: If Timer1 has expired, update the button history from the pushbutton value.
         // YOU MUST WRITE timer1expired IN myTimer.c
         if(timer1Expired())
-            count1++;
+            buttonhistory = (int) checkStatus_BoosterpackS1();
 
 
         // TODO: Call the button state machine function to check for a completed, debounced button press.
         // YOU MUST WRITE THIS FUNCTION BELOW.
-        int buttonhistory = (int) checkStatus_BoosterpackS1();
+
         bool check = fsmBoosterpackButtonS1(buttonhistory);
 
 
@@ -116,34 +117,38 @@ bool fsmBoosterpackButtonS1(unsigned int buttonhistory)
 {
     bool pressed = false;
 
-    char buttonStatus = checkStatus_BoosterpackS1();
-    bool timerOn = timer0Expired();
-    debounce state;
-    if(buttonhistory == 0)
-    {
-        state == Press;
-    }
-    else
-        state == Release;
+    int prevbuttonStatus = buttonhistory;
+    //bool timerOn = timer0Expired();
+    debounce state = Waiting;
+    int curbuttonStatus = (int) checkStatus_BoosterpackS1();
 
-
+    if(prevbuttonStatus == PRESSED)
+        state = WaitingForRelease;
 
     switch(state)
     {
-    case Press:
-        if(buttonStatus == PRESSED)
-            pressed = true;
-            break;
-    case Release:
-        if(buttonStatus == PRESSED)
-            pressed = false;
+    case(Waiting):
+        if(curbuttonStatus == PRESSED)
+            state = Detected;
         break;
-    //case PresstoRelease:
-      //  if()
-    //case ReleasetoPress:
-      //  if(buttonStatus == RELEASED)
-        //    state = Release;
-        //else if (timer0Expired())
+
+    case(Detected):
+        while(!timer1Expired());
+        if(curbuttonStatus == PRESSED)
+            state = WaitingForRelease;
+        else
+            state = Waiting;
+        break;
+
+    case(WaitingForRelease):
+        if(curbuttonStatus == RELEASED)
+            state = Update;
+        break;
+
+    case(Update):
+        pressed = true;
+        break;
+
     }
 
     return pressed;
